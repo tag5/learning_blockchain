@@ -97,7 +97,7 @@ contract Voting is Ownable {
     function send_vote(uint proposalId) public  {
         require(whitelist[msg.sender].isRegistered==true,"Utilisateur non enregistré");
         require(current_status==WorkflowStatus.VotingSessionStarted,"Ce n'est pas le bon moment !");
-        require(whitelist[msg.sender].hasVoted==true,"Dejà voté");
+        require(whitelist[msg.sender].hasVoted!=true,"Dejà voté");
         require(proposalId<proposals.length,"Proposition inconnue");
         
         proposals[proposalId].voteCount = proposals[proposalId].voteCount.add(1);

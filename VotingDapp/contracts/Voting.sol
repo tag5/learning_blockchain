@@ -44,8 +44,24 @@ contract Voting is Ownable {
     mapping(address => Voter) public whitelist;
     uint public winningProposalId;
     Proposal[] public proposals;
-    WorkflowStatus private current_status = WorkflowStatus.RegisteringVoters;
-    
+    WorkflowStatus public current_status = WorkflowStatus.RegisteringVoters;
+
+
+    //  TypeError: This type is only supported in ABIEncoderV2. Use "pragma experimental ABIEncoderV2;" to enable the feature.
+    function get_proposals_length() external view returns (uint) {
+        return proposals.length;
+    }
+
+    function get_proposal_description(uint index) external view returns (string memory) {
+       require(index<proposals.length,"index incorrect.");
+       return proposals[index].description;
+    }
+
+    function get_proposal_voteCount(uint index) external view returns (uint) {
+       require(index<proposals.length,"index incorrect.");
+       return proposals[index].voteCount;
+    }
+
     function register_voter(address compte) public onlyOwner {
         require(current_status==WorkflowStatus.RegisteringVoters,"Ce n'est pas le bon moment !");
         require(whitelist[compte].isRegistered!=true,"Deja inscrit");       
@@ -91,7 +107,7 @@ contract Voting is Ownable {
     function send_vote(uint proposalId) public  {
         require(whitelist[msg.sender].isRegistered==true,"Utilisateur non enregistré");
         require(current_status==WorkflowStatus.VotingSessionStarted,"Ce n'est pas le bon moment !");
-        require(whitelist[msg.sender].hasVoted==true,"Dejà voté");
+        require(whitelist[msg.sender].hasVoted!=true,"Dejà voté");
         require(proposalId<proposals.length,"Proposition inconnue");
         
         proposals[proposalId].voteCount = proposals[proposalId].voteCount.add(1);
